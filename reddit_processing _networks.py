@@ -43,7 +43,7 @@ for post in subreddit.top(time_filter='year'):
     print(str(post.id) + '  ' + str(post.created_utc) + '  ' + str(post.title) + '\n')
     post.comment_sort = 'top'
     post.comments.replace_more(limit=None)
-    posts.append((post.id, posts.title))
+    posts.append((post.id, post.title))
     # collecting and cleaning comments from each post
     all_comments = []
     for init_comment in post.comments.list():
@@ -65,10 +65,9 @@ for post in subreddit.top(time_filter='year'):
 post_id = []
 post_title = []
 
-for post in posts:
-    for id, title in post:
-        post_id.append(id)
-        post_title.append(title)
+for id, title in posts:        
+  post_id.append(id)
+  post_title.append(title)
 
 orig_post_info = {'post_id' : post_id, 'title' : post_title}
 
@@ -82,14 +81,15 @@ for comm in all_comms:
         author.append(author_name)
         author_id.append(id) 
         comment_text.append(body) 
-        orig_post_id.append(post_id) 
         sentiment.append(sentiment_score)
+        orig_post_id.append(post_id) 
 
-commenter_info = {'author' : author, 
-'author_id' : author_id, 
-'comment' : comment_text, 
-'post_id' : orig_post_id, 
-'sentiment' : sentiment}
+commenter_info = {
+    'author' : author, 
+    'author_id' : author_id, 
+    'comment' : comment_text, 
+    'sentiment' : sentiment, 
+    'post_id' : orig_post_id}
 
 # create dataframes and save as csv
 orig_post_df = pd.DataFrame(orig_post_info)

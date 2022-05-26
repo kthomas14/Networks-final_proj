@@ -1,0 +1,99 @@
+---
+title: "Final Project"
+author: "MengChen Chung"
+date: '2022-04-17'
+output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("igraph")
+```
+
+
+```{r fig.width = 20, fig.height = 15}
+# read in data
+data <- read.csv(file = 'reddit_comments_filtered_2.csv') # Reddit comments with more than 2 comments (not necessarily on diff posts)
+post <- read.csv(file = 'reddit_posts.csv')
+ver <- data.frame(author_id=data[, 'author_id'])
+edg <- data.frame(author=data[, 'author'], post_id=data[, 'post_id'])
+  
+g <- graph_from_data_frame(edg[1:400,], directed=FALSE) # limit to 400 comments for viz
+```
+
+```{r}
+# one mode network
+V(g)$type <- bipartite_mapping(g)$type
+bipartite_matrix <- as_incidence_matrix(g)
+post_matrix_prod <- t(bipartite_matrix) %*% bipartite_matrix 
+diag(post_matrix_prod) <- 0
+# post_matrix_prod
+
+user_matrix_prod <- bipartite_matrix %*% t(bipartite_matrix)
+diag(user_matrix_prod) <- 0
+# user_matrix_prod
+
+# visualization
+V(g)$color <- ifelse(V(g)$type, "lightblue", "salmon")
+V(g)$shape <- ifelse(V(g)$type, "circle", "square")
+V(g)$label <- ifelse(V(g)$type, V(g)$name, "")
+E(g)$color <- "lightgray"
+
+set.seed(100)
+layout = layout_as_bipartite
+plot(g, vertex.size=5)
+plot(g, vertex.size=5, layout=layout)
+
+g_post <- graph_from_adjacency_matrix(post_matrix_prod, mode = "undirected")
+plot(g_post, vertex.label.cex = 2.5, vertex.color = "lightblue", vertex.label.color = "black")
+
+g_user <- graph_from_adjacency_matrix(user_matrix_prod, mode = "undirected")
+plot(g_user, vertex.label=NA, vertex.color = "salmon", vertex.shape = "square", vertex.label.color = "black")
+
+#	The 2-mode matrix represents any events an actor had participated in. The woman-to-woman matrix describes how many events in common any two women had. The event-to-event matrix describes how many women in common any two events had.
+#	A tie for the 2-mode matrix represents this woman who had joined this event. A tie for the woman-to-woman matrix describes the two women who participated in a common event. And a tie for the event-to-event matrix describes there were a pair of women joining this event.
+#	The main diagonal of the 1-mode matrices means the "loops", a woman and herself could be counted as joining the same event; or in the event to event matrix meaning the event and itself had how many women in common. It doesn’t make any sense that there would be loops when projecting a bipartite network (as we would then be adding information that did not exist in the original network), so we want to set the diagonal of our result to 0.
+```
+
+```{r}
+# 4
+types <- V(g)$type # getting each vertex `type` let's us sort easily
+deg <- igraph::degree(g)
+bet <- igraph::betweenness(g)
+clos <- igraph::closeness(g)
+eig <- igraph::eigen_centrality(g)$vector
+
+cent_df <- data.frame(types, deg, bet, clos, eig)
+cent_df[order(cent_df$type, decreasing = TRUE),] ## sort w/ `order` by `type`
+
+V(g)$size <- igraph::degree(g)
+V(g)$label.cex <- igraph::degree(g) ** 0.1
+plot(g, layout = layout_with_graphopt)
+
+# I calculated all centrality, but degree is the simplest and most straightforward one, so I used it for plotting. 
+# The degree for the women is the rates of participation: Number of events with which each actor is affiliated. It is the degree of the node representing the actor in the 2-mode network
+# The degree for the events is the size of events: Number of actors affiliated with each event. It is the degree of the node representing the event in the 2-mode network
+
+# 5
+# igraph::degree(g_post)
+# # binary
+# g_post_2 <- graph_from_adjacency_matrix(as.matrix((woman_matrix_prod>0)+0), mode = "undirected")
+# igraph::degree(g_ww_2)
+# 2-mode
+igraph::degree(g)
+# The woman-to-woman matrix describes how many events in common any two women had, whose degree is the accumulation in this case. And for the binary matrix, it is still the number of events in common any two women had, while its degree drops significantly. When decreasing the data, we more or less suffer the information loss, hence we should use the original one-mode matrix if we care about the information's completeness.
+# The 2-mode matrix represents any events an actor had participated in, and the degree represents the cumulative number of events this woman had been to, which is different from the meanings of the above two situations.
+
+
+# 6
+# Since we care about the overall attendance, a larger event will have more participants and hence each participation takes less portion. Therefore, it is sometimes reasonable to say that co-attendance at larger events could be counted as less than co-attendance at small events. We can assign less weight to a linkage from an actor to a larger event in this case.
+
+```
+
+

@@ -79,3 +79,9 @@ summary(tpcs, n=10)
 
 ```
 
+```{r}
+apply(tpcs$omega, 1, max, na.rm = TRUE)
+
+ cbind(1:nrow(tpcs$omega), max.col(tpcs$omega, 'first'))
+```
+

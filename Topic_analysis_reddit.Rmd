@@ -1,0 +1,81 @@
+---
+title: "networks topic analysis"
+author: "Kaylah Thomas"
+date: "5/25/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(dplyr)
+library(Matrix)
+library(readr)
+library(cluster)
+library(maptpx) # for the topics function
+
+library(gamlr)
+library(caret)
+library(fastDummies)
+
+```
+
+```{r}
+df_reviews <- read_csv('~/Downloads/reddit_posts.csv')
+
+reviews_tok <- df_reviews %>% 
+  unnest_tokens(
+    output = word,    # first argument is output
+    input = title, # second argument is input
+    token = "words"   # third argument is token, with default "words"
+    )
+
+reviews_tok <- reviews_tok %>%
+  filter(!(word %in% stop_words$word)) %>%
+  group_by(word) %>% 
+  filter(n()<10)
+reviews_tok
+
+reviews_tok$word <- reviews_tok$word %>%
+  str_remove_all('[0-9]') %>%
+  str_remove_all("[[:punct:]]")
+
+reviews_tok <- reviews_tok %>%
+  filter(!nchar(word)<2)
+
+reviews_tok_cop <- reviews_tok %>%
+  select(post_id, word)
+
+# group words from same restaurant together, create a network of restaurants that share similar topics (word choice)
+rest_names <- df_reviews %>%
+  distinct(post_id)
+
+word_lst <- reviews_tok %>%
+  distinct(word)
+
+reviews_tok_cop$RowIndex <- match(reviews_tok_cop$post_id, rest_names$post_id)
+reviews_tok_cop$ColIndex <- match(reviews_tok_cop$word, word_lst$word)
+
+reviews_tok_cop %>%
+  select(post_id, word, RowIndex, ColIndex)
+reviews_tok_cop
+
+msparse <- sparseMatrix( i = reviews_tok_cop$RowIndex, j = reviews_tok_cop$ColIndex, 
+                         dims = c(nrow(rest_names), nrow(word_lst)), 
+                         dimnames = list(rest_names$name, word_lst$word), x=1)
+msparse #affiliation matrix
+
+
+
+tpcs <- topics(msparse,K=7:10) # 
+
+
+summary(tpcs, n=10)
+
+```
+

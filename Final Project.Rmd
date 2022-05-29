@@ -15,15 +15,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library("igraph")
 library(dplyr)
+library(ggplot2)
 ```
 
 
-```{r fig.width = 20, fig.height = 15}
-# read in data
+```{r read in data}
 comment_data <- read.csv(file = 'reddit_comments_filtered_2.csv') # Reddit comments with more than 2 comments (not necessarily on diff posts)
 post_data <- read.csv(file = 'reddit_posts.csv')
 # ver <- data.frame(author_id=data[, 'author_id'])
 # edg <- data.frame(author=data[, 'author'], post_id=data[, 'post_id'])
+
+post_data %>% 
+  ggplot(aes(x=topic)) +
+  geom_bar(fill="blue") + 
+  labs(title="Topic Count among Posts") +
+  theme_minimal()
 
 # keep the users appearing on more than 2 posts
 # get the to_keep records
@@ -52,11 +58,10 @@ ver <- duplicated %>%
 g <- graph_from_data_frame(relations, directed=FALSE)
 ```
 
-```{r}
-# create two mode network
+```{r two mode network}
 V(g)$type <- bipartite_mapping(g)$type
 
-# assign attributes to different modes
+# assign attributes to nodes
 g <- set_vertex_attr(g, 'sentiment', index = sort(V(g)[!V(g)$type]$name), ver$sentiment)
 g <- set_vertex_attr(g, 'topic_id', index = V(g)[V(g)$type]$name, post_data$topic_id)
 g <- set_vertex_attr(g, 'topic', index = V(g)[V(g)$type]$name, post_data$topic)
@@ -73,20 +78,35 @@ diag(user_matrix_prod) <- 0
 # user_matrix_prod
 ```
 
-```{r}
-# visualization
+```{r visualization}
 V(g)$color <- ifelse(V(g)$type, "lightblue", "salmon")
 V(g)$shape <- ifelse(V(g)$type, "circle", "square")
 # V(g)$label <- ifelse(V(g)$type, V(g)$name, "")
 E(g)$color <- "lightgray"
 
 set.seed(10)
-layout = layout_as_bipartite
-plot(g, vertex.size=5, vertex.label=NA)
-plot(g, vertex.size=5, vertex.label=NA, layout=layout)
+plot(g, vertex.size=5, vertex.label=NA, layout=layout_as_bipartite,
+     main="Network of Politics Subreddit Users and Posts\nBipartite Layout")
+plot(g, vertex.size=5, vertex.label=NA, layout=layout_with_drl,
+     main="Network of Politics Subreddit Users and Posts\nDrL Layout")
+
+
+# visualization for only one post
+g_sub <- subgraph(g, c(which(V(g)$name=='t3_pl5g26'), neighbors(g, 't3_pl5g26')))
+# V(g_sub)$color <- ifelse(V(g_sub)$type, "lightblue", "salmon")
+V(g_sub)$color <- ifelse(V(g_sub)$sentiment>=0, "#36c769", "#F72A19")
+V(g_sub)$shape <- ifelse(V(g_sub)$type, "circle", "square")
+# V(g)$label <- ifelse(V(g)$type, V(g)$name, "")
+E(g_sub)$color <- "lightgray"
+plot(g_sub, vertex.size=5, vertex.label=NA, 
+     main='Positive and Negative Users for Post with the Highest Degree\nTopic: Anti-Goverment',
+     sub='')
+
 
 g_post <- graph_from_adjacency_matrix(post_matrix_prod, mode = "undirected")
-
+g_post <- set_vertex_attr(g_post, 'topic_id', index = V(g_post)$name, post_data$topic_id)
+g_post <- set_vertex_attr(g_post, 'topic', index = V(g_post)$name, post_data$topic)
+g_post <- set_vertex_attr(g_post, 'title', index = V(g_post)$name, post_data$title)
 set.seed(10)
 plot(g_post, 
      vertex.label=NA, 
@@ -95,20 +115,20 @@ plot(g_post,
      # vertex.label.color = "black"
      )
 simp_post <- simplify(g_post)
-plot(simp_post, vertex.label=NA, vertex.size=6, vertex.color = "lightblue",  edge.width=0.001 * count_multiple(g_post))
+plot(simp_post, vertex.label=NA, vertex.size=6, vertex.color = "lightblue",  edge.width=0.001 * count_multiple(g_post), main='One-Mode Network on Posts')
 
-set.seed(10)
 g_user <- graph_from_adjacency_matrix(user_matrix_prod, mode = "undirected")
-V(g_user)$color <- ifelse(V(g)$sentiment>=0, "#28069A", "#F72A19")
+g_user <- set_vertex_attr(g_user, 'sentiment', index = sort(V(g_user)$name), ver$sentiment)
+set.seed(10)
+V(g_user)$color <- ifelse(V(g)$sentiment>=0, "#36c769", "#F72A19")
 plot(g_user, vertex.label=NA, vertex.size=6, vertex.shape = "square", vertex.label.color = "black")
 simp_net <- simplify(g_user)
-plot(simp_net, vertex.label=NA, vertex.size=6, vertex.shape = "square", edge.color="gray70", edge.width=0.001 * count_multiple(g_user))
+plot(simp_net, vertex.label=NA, vertex.size=6, vertex.shape = "square", edge.color="gray70", edge.width=0.001 * count_multiple(g_user), main='One-Mode Network on Users')
 
 #	The main diagonal of the 1-mode matrices means the "loops", a woman and herself could be counted as joining the same event; or in the event to event matrix meaning the event and itself had how many women in common. It doesn’t make any sense that there would be loops when projecting a bipartite network (as we would then be adding information that did not exist in the original network), so we want to set the diagonal of our result to 0.
 ```
 
-```{r}
-# 4
+```{r centrality}
 types <- V(g)$type # getting each vertex `type` let's us sort easily
 topic <- V(g)$topic
 sentiment <- V(g)$sentiment
@@ -122,7 +142,11 @@ cent_df <- data.frame(types, topic, sentiment, deg, betw, close, eigen)
 cent_df <- cent_df[order(cent_df$deg, decreasing = TRUE),] ## sort w/ `order` by `degree`
 cent_df
 
-library(ggplot2)
+cent_df %>%
+  filter(types==TRUE) %>%
+  group_by(topic) %>%
+  summarize_each(list(mean))
+
 cent_df %>% 
   filter(types == FALSE) %>%
   ggplot(aes(x=deg)) +
@@ -137,6 +161,18 @@ cent_df %>%
   labs(title="Degree Centrality Density among Posts", x="degree")+
   theme_minimal()
 
+cent_df %>% 
+  filter(types == FALSE) %>%
+  ggplot(aes(x=sentiment)) +
+  geom_histogram(bins=40, fill="blue") + 
+  labs(title="Histogram of User Sentiment")+
+  theme_minimal()
+
+cent_df %>%
+  filter(types==FALSE, deg==2) %>%
+  group_by(deg) %>%
+  summarise(sentiment=mean(sentiment))
+
 # V(g)$size <- igraph::degree(g)
 # V(g)$label.cex <- igraph::degree(g) ** 0.1
 # plot(g, vertex.label=NA, layout = layout_with_graphopt)
@@ -146,16 +182,46 @@ cent_df %>%
 # The degree for the events is the size of events: Number of actors affiliated with each event. It is the degree of the node representing the event in the 2-mode network
 ```
 ```{r}
-t3_nk564e <- get.edgelist(g)[which(g[2]=='t3_nk564e'), 2]
-t3_nk564e
-V(g)$sentiment[which(get.edgelist(g)[,2]=='t3_pl5g26')]
-get.edgelist(g)[(get.edgelist(g)[,2]=='t3_pl5g26')]
-E(g)
+V(g)[[which(get.edgelist(g)[,2]=='t3_nk564e')]]
+
+temp_list <- get.edgelist(g)[which(get.edgelist(g)[,2]=='t3_pl5g26')]
+V(g)$sentiment[which(V(g)$name %in% temp_list)]
+mean(V(g)[temp_list]$sentiment)
+
+# 
+mean(V(g)[unique(temp_list)]$sentiment)
 ```
 
-```{r}
-# 5
-# igraph::degree(g_post)
+```{r centrality for one mode}
+topic <- V(g_post)$topic
+deg <- igraph::degree(g_post)
+betw <- igraph::betweenness(g_post)
+close <- igraph::closeness(g_post)
+eigen <- igraph::eigen_centrality(g_post)$vector
+
+cent_df_post <- data.frame(topic, deg, betw, close, eigen)
+cent_df_post <- cent_df_post[order(cent_df_post$deg, decreasing = TRUE),] ## sort w/ `order` by `degree`
+cent_df_post
+
+library(RColorBrewer)
+
+simple_post <- simplify(g_post)
+V(simple_post)$size <- igraph::degree(simple_post)*0.55
+pal <- brewer.pal(length(unique(V(g)$topic_id)), "Dark2")
+plot(simple_post, vertex.label=NA, vertex.color=pal[as.numeric(as.factor(vertex_attr(simple_post, "topic_id")))], layout = layout_with_fr, main="One-Mode Network on Posts")
+legend("topleft",legend=unique(V(g)[V(g)$type==TRUE]$topic),fill=pal, cex = 0.5)
+# plot(simple_post, vertex.label=NA, layout=layout_with_lgl, edge.color="gray70", edge.width=0.01 * count_multiple(g_post))
+
+sentiment <- V(g_user)$sentiment
+deg <- igraph::degree(g_user)
+betw <- igraph::betweenness(g_user)
+close <- igraph::closeness(g_user)
+eigen <- igraph::eigen_centrality(g_user)$vector
+
+cent_df_user <- data.frame(sentiment, deg, betw, close, eigen)
+cent_df_user <- cent_df_user[order(cent_df_user$deg, decreasing = TRUE),] ## sort w/ `order` by `degree`
+cent_df_user
+
 # # binary
 # g_post_2 <- graph_from_adjacency_matrix(as.matrix((woman_matrix_prod>0)+0), mode = "undirected")
 # igraph::degree(g_ww_2)

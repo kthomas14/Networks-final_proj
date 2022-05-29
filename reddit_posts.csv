@@ -1,51 +1,51 @@
-,post_id,title
-0,nk564e,Sen. Elizabeth Warren wants to bar members of Congress from ever trading individual stocks again
-1,t2suj2,Mitt Romney says Americans who support Putin are ‘almost treasonous’
-2,t11uq0,"Trump, who was impeached for withholding nearly $400 million in military aid from Ukraine, said 'this deadly Ukraine situation would never have happened' if he were in office"
-3,rxqvwi,Three in four voters support banning lawmakers from trading stocks: poll
-4,su3zob,Sen. Elizabeth Warren now wants to ban all state lawmakers and elected officials from trading corporate stocks
-5,tp4xtx,President Joe Biden to propose new 20% minimum billionaire tax
-6,s739ob,"67% of Americans support bill to ban stock trading by members of Congress, even as Pelosi resists"
-7,ubo2ao,"Complaint filed in Florida to ban Bible as “too woke” | The book contains several ""prohibited topics"" - including incest, bestiality, progressive social programs, and the repercussions of slavery."
-8,qfe73p,AOC calls for expulsion of any members of Congress involved in planning January 6 riot
-9,spdw28,Senate candidate who smoked blunt in ad burns Confederate flag in latest spot
-10,t2blwr,Calls to expel Republican Marjorie Taylor Greene after speech at white nationalist event
-11,pghh91,Texans are trolling an anonymous tip line for reporting suspected abortions
-12,tewol7,U.S. Senate approves bill that would make Daylight Savings Time permanent in 2023
-13,uq4prt,"Bernie Sanders Reintroduces Medicare for All Bill, Saying Healthcare Is a Human Right"
-14,nu1n1z,"Bernie Sanders Reminds Americans 'Not a Single Republican Voted' for $1,400 Stimulus Checks"
-15,s7qcz1,Move to Ban Stock Trades in Congress Gains Steam With Rare Bipartisan Unity
-16,pnm6ln,Texas GOP website down after Anonymous hack and replaced by Planned Parenthood fundraiser
-17,s02nrx,Sen. Jon Ossoff set to introduce bill barring members of Congress from trading individual stocks: report
-18,qqt9x7,"Stacey Abrams PAC wipes out $212 million in medical debt for 108,000 people in 5 states"
-19,t3u5i4,Poll Shows Majority of US Voters Blame Corporate Profiteering for Inflation
-20,nkzei9,Auschwitz Memorial calls Greene Holocaust comments a 'sad symptom of moral and intellectual decline'
-21,p6bbbq,Americans rank George W. Bush as the president most responsible for the outcome of the Afghanistan war: Insider poll
-22,p0ohhf,"White woman who stole $250K gets probation, while Black woman who stole $40K goes to jail. Disparate sentences spark calls for reform"
-23,pl5g26,"Biden to announce requirement for employers with more than 100 employees to mandate vaccines, impacting over 80 million workers"
-24,qhkr8f,74-Year-Old Man Blocks Universal Paid Leave
-25,ooaldw,Elizabeth Warren says Jeff Bezos 'forgot to thank all the hardworking Americans who actually paid taxes' after his space flight
-26,rz7wkf,Jon Ossoff expected to snub Pelosi by pushing ban on Congress stock trades
-27,ut7h3d,Republicans Just Voted Against Feeding the Baby They’re Forcing You to Have
-28,uhgdek,Biden urges Congress to codify Roe v. Wade into law
-29,tgnjzt,Hacking group Anonymous puts 'Russian asset' Marjorie Taylor Greene on notice
-30,q9brrv,"After 20 years, it's time to repeal the Patriot Act and begin to dismantle the surveillance state | After 9/11, Congress gave the government unchecked authority to spy on its own people. It's been a disaster"
-31,ntrz08,"Walmart, McDonald's, and Amazon are among companies celebrating Pride after donating hundreds of thousands of dollars to politicians who voted against the Equality Act"
-32,p5fbv1,GOP Removes Page Praising Donald Trump's 'Historic' Peace Deal With Taliban
-33,t5gcgx,Select committee concludes Trump violated multiple laws in effort to overturn election
-34,tbcz32,Democrats unveil plan to issue quarterly checks to Americans by taxing oil companies posting huge profits
-35,sof3ed,Louisiana Senate Candidate Literally Torches a Confederate Flag in New Campaign Ad
-36,t0hamt,Bernie Sanders says Trump's praise for 'Putin's murderous invasion of Ukraine' is 'outrageous'
-37,ttd3ql,House Passes Bill to Limit Cost of Insulin to $35 a Month
-38,phbnyh,Biden signs order to declassify 9/11 attack investigation documents
-39,q7l67k,Trump Tells Republicans Not to Vote in 2022 or 2024
-40,uqupns,"Liz Cheney says Republicans have ‘enabled white nationalism, white supremacy, and anti-semitism’"
-41,r6o4m9,Stacey Abrams is running for Georgia governor in 2022
-42,uhudjb,"American women can obtain abortions in Canada if Roe v. Wade falls, Canadian minister says"
-43,p0f3op,CNN's Jim Acosta said scientists should name COVID-19 variants after Republican governors who've refused to enforce safety measures
-44,ou0rk8,"Capitol police ordered to arrest Congress lawmakers, staff and visitors who refuse mask mandate"
-45,rm3opa,Opinion: Pelosi said it’s fine for lawmakers to trade stocks. She’s wrong.
-46,nvhhx7,“Tax the Rich” Gains Momentum After Explosive Report on Billionaire Tax Dodging
-47,t4q4nz,Biden says the US will seize yachts and luxury apartments from Russian oligarchs with wealth parked in the country: 'We are coming for your ill-begotten gains'
-48,pugq38,Arizona audit results reveal Trump lost to Biden by even bigger margin
-49,tqxa6i,White House records turned over to House show 7-hour gap in Trump phone log on Jan. 6
+,post_id,title,topic_id,topic
+0,t3_nk564e,Sen. Elizabeth Warren wants to bar members of Congress from ever trading individual stocks again,5,barring
+1,t3_t2suj2,Mitt Romney says Americans who support Putin are ‘almost treasonous’,6,treason
+2,t3_t11uq0,"Trump, who was impeached for withholding nearly $400 million in military aid from Ukraine, said 'this deadly Ukraine situation would never have happened' if he were in office",7,impeachment
+3,t3_rxqvwi,Three in four voters support banning lawmakers from trading stocks: poll,6,treason
+4,t3_su3zob,Sen. Elizabeth Warren now wants to ban all state lawmakers and elected officials from trading corporate stocks,5,barring
+5,t3_tp4xtx,President Joe Biden to propose new 20% minimum billionaire tax,2,democrats
+6,t3_s739ob,"67% of Americans support bill to ban stock trading by members of Congress, even as Pelosi resists",6,treason
+7,t3_ubo2ao,"Complaint filed in Florida to ban Bible as “too woke” | The book contains several ""prohibited topics"" - including incest, bestiality, progressive social programs, and the repercussions of slavery.",1,complaints
+8,t3_qfe73p,AOC calls for expulsion of any members of Congress involved in planning January 6 riot,3,police
+9,t3_spdw28,Senate candidate who smoked blunt in ad burns Confederate flag in latest spot,1,complaints
+10,t3_t2blwr,Calls to expel Republican Marjorie Taylor Greene after speech at white nationalist event,1,complaints
+11,t3_pghh91,Texans are trolling an anonymous tip line for reporting suspected abortions,2,democrats
+12,t3_tewol7,U.S. Senate approves bill that would make Daylight Savings Time permanent in 2023,2,democrats
+13,t3_uq4prt,"Bernie Sanders Reintroduces Medicare for All Bill, Saying Healthcare Is a Human Right",2,democrats
+14,t3_nu1n1z,"Bernie Sanders Reminds Americans 'Not a Single Republican Voted' for $1,400 Stimulus Checks",2,democrats
+15,t3_s7qcz1,Move to Ban Stock Trades in Congress Gains Steam With Rare Bipartisan Unity,3,police
+16,t3_pnm6ln,Texas GOP website down after Anonymous hack and replaced by Planned Parenthood fundraiser,1,complaints
+17,t3_s02nrx,Sen. Jon Ossoff set to introduce bill barring members of Congress from trading individual stocks: report,5,barring
+18,t3_qqt9x7,"Stacey Abrams PAC wipes out $212 million in medical debt for 108,000 people in 5 states",4,anti-government
+19,t3_t3u5i4,Poll Shows Majority of US Voters Blame Corporate Profiteering for Inflation,6,treason
+20,t3_nkzei9,Auschwitz Memorial calls Greene Holocaust comments a 'sad symptom of moral and intellectual decline',1,complaints
+21,t3_p6bbbq,Americans rank George W. Bush as the president most responsible for the outcome of the Afghanistan war: Insider poll,2,democrats
+22,t3_p0ohhf,"White woman who stole $250K gets probation, while Black woman who stole $40K goes to jail. Disparate sentences spark calls for reform",1,complaints
+23,t3_pl5g26,"Biden to announce requirement for employers with more than 100 employees to mandate vaccines, impacting over 80 million workers",4,anti-government
+24,t3_qhkr8f,74-Year-Old Man Blocks Universal Paid Leave,3,police
+25,t3_ooaldw,Elizabeth Warren says Jeff Bezos 'forgot to thank all the hardworking Americans who actually paid taxes' after his space flight,2,democrats
+26,t3_rz7wkf,Jon Ossoff expected to snub Pelosi by pushing ban on Congress stock trades,3,police
+27,t3_ut7h3d,Republicans Just Voted Against Feeding the Baby They’re Forcing You to Have,2,democrats
+28,t3_uhgdek,Biden urges Congress to codify Roe v. Wade into law,3,police
+29,t3_tgnjzt,Hacking group Anonymous puts 'Russian asset' Marjorie Taylor Greene on notice,1,complaints
+30,t3_q9brrv,"After 20 years, it's time to repeal the Patriot Act and begin to dismantle the surveillance state | After 9/11, Congress gave the government unchecked authority to spy on its own people. It's been a disaster",4,anti-government
+31,t3_ntrz08,"Walmart, McDonald's, and Amazon are among companies celebrating Pride after donating hundreds of thousands of dollars to politicians who voted against the Equality Act",1,complaints
+32,t3_p5fbv1,GOP Removes Page Praising Donald Trump's 'Historic' Peace Deal With Taliban,1,complaints
+33,t3_t5gcgx,Select committee concludes Trump violated multiple laws in effort to overturn election,4,anti-government
+34,t3_tbcz32,Democrats unveil plan to issue quarterly checks to Americans by taxing oil companies posting huge profits,2,democrats
+35,t3_sof3ed,Louisiana Senate Candidate Literally Torches a Confederate Flag in New Campaign Ad,1,complaints
+36,t3_t0hamt,Bernie Sanders says Trump's praise for 'Putin's murderous invasion of Ukraine' is 'outrageous',4,anti-government
+37,t3_ttd3ql,House Passes Bill to Limit Cost of Insulin to $35 a Month,2,democrats
+38,t3_phbnyh,Biden signs order to declassify 9/11 attack investigation documents,2,democrats
+39,t3_q7l67k,Trump Tells Republicans Not to Vote in 2022 or 2024,7,impeachment
+40,t3_uqupns,"Liz Cheney says Republicans have ‘enabled white nationalism, white supremacy, and anti-semitism’",1,complaints
+41,t3_r6o4m9,Stacey Abrams is running for Georgia governor in 2022,3,police
+42,t3_uhudjb,"American women can obtain abortions in Canada if Roe v. Wade falls, Canadian minister says",1,complaints
+43,t3_p0f3op,CNN's Jim Acosta said scientists should name COVID-19 variants after Republican governors who've refused to enforce safety measures,1,complaints
+44,t3_ou0rk8,"Capitol police ordered to arrest Congress lawmakers, staff and visitors who refuse mask mandate",3,police
+45,t3_rm3opa,Opinion: Pelosi said it’s fine for lawmakers to trade stocks. She’s wrong.,3,police
+46,t3_nvhhx7,“Tax the Rich” Gains Momentum After Explosive Report on Billionaire Tax Dodging,1,complaints
+47,t3_t4q4nz,Biden says the US will seize yachts and luxury apartments from Russian oligarchs with wealth parked in the country: 'We are coming for your ill-begotten gains',1,complaints
+48,t3_pugq38,Arizona audit results reveal Trump lost to Biden by even bigger margin,4,anti-government
+49,t3_tqxa6i,White House records turned over to House show 7-hour gap in Trump phone log on Jan. 6,4,anti-government

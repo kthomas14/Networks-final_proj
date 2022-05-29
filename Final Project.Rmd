@@ -14,22 +14,55 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library("igraph")
+library(dplyr)
 ```
 
 
 ```{r fig.width = 20, fig.height = 15}
 # read in data
-data <- read.csv(file = 'reddit_comments_filtered_2.csv') # Reddit comments with more than 2 comments (not necessarily on diff posts)
-post <- read.csv(file = 'reddit_posts.csv')
-ver <- data.frame(author_id=data[, 'author_id'])
-edg <- data.frame(author=data[, 'author'], post_id=data[, 'post_id'])
-  
-g <- graph_from_data_frame(edg[1:400,], directed=FALSE) # limit to 400 comments for viz
+comment_data <- read.csv(file = 'reddit_comments_filtered_2.csv') # Reddit comments with more than 2 comments (not necessarily on diff posts)
+post_data <- read.csv(file = 'reddit_posts.csv')
+# ver <- data.frame(author_id=data[, 'author_id'])
+# edg <- data.frame(author=data[, 'author'], post_id=data[, 'post_id'])
+
+# keep the users appearing on more than 2 posts
+# get the to_keep records
+to_keep <- 
+  comment_data %>%
+  select(author, post_id) %>%
+  group_by(author, post_id) %>%
+  summarise(n=n()) %>%
+  filter(duplicated(author)) %>%
+  select(author)
+
+duplicated <- comment_data %>%
+  filter(author %in% to_keep$author) %>%
+  select(author, author_id, post_id, sentiment)
+
+relations <- duplicated[,c(1,3)]
+names(relations)[names(relations) == "author"] <- "from"
+names(relations)[names(relations) == "post_id"] <- "to"
+
+# averaget users' sentiment score from their comments
+ver <- duplicated %>%
+  group_by(author) %>%
+  summarize(sentiment=mean(sentiment))
+
+# create network
+g <- graph_from_data_frame(relations, directed=FALSE)
 ```
 
 ```{r}
-# one mode network
+# create two mode network
 V(g)$type <- bipartite_mapping(g)$type
+
+# assign attributes to different modes
+g <- set_vertex_attr(g, 'sentiment', index = sort(V(g)[!V(g)$type]$name), ver$sentiment)
+g <- set_vertex_attr(g, 'topic_id', index = V(g)[V(g)$type]$name, post_data$topic_id)
+g <- set_vertex_attr(g, 'topic', index = V(g)[V(g)$type]$name, post_data$topic)
+g <- set_vertex_attr(g, 'title', index = V(g)[V(g)$type]$name, post_data$title)
+
+# one mode network
 bipartite_matrix <- as_incidence_matrix(g)
 post_matrix_prod <- t(bipartite_matrix) %*% bipartite_matrix 
 diag(post_matrix_prod) <- 0
@@ -38,48 +71,89 @@ diag(post_matrix_prod) <- 0
 user_matrix_prod <- bipartite_matrix %*% t(bipartite_matrix)
 diag(user_matrix_prod) <- 0
 # user_matrix_prod
+```
 
+```{r}
 # visualization
 V(g)$color <- ifelse(V(g)$type, "lightblue", "salmon")
 V(g)$shape <- ifelse(V(g)$type, "circle", "square")
-V(g)$label <- ifelse(V(g)$type, V(g)$name, "")
+# V(g)$label <- ifelse(V(g)$type, V(g)$name, "")
 E(g)$color <- "lightgray"
 
-set.seed(100)
+set.seed(10)
 layout = layout_as_bipartite
-plot(g, vertex.size=5)
-plot(g, vertex.size=5, layout=layout)
+plot(g, vertex.size=5, vertex.label=NA)
+plot(g, vertex.size=5, vertex.label=NA, layout=layout)
 
 g_post <- graph_from_adjacency_matrix(post_matrix_prod, mode = "undirected")
-plot(g_post, vertex.label.cex = 2.5, vertex.color = "lightblue", vertex.label.color = "black")
 
+set.seed(10)
+plot(g_post, 
+     vertex.label=NA, 
+     # vertex.label.cex = 2.5, 
+     vertex.color = "lightblue", 
+     # vertex.label.color = "black"
+     )
+simp_post <- simplify(g_post)
+plot(simp_post, vertex.label=NA, vertex.size=6, vertex.color = "lightblue",  edge.width=0.001 * count_multiple(g_post))
+
+set.seed(10)
 g_user <- graph_from_adjacency_matrix(user_matrix_prod, mode = "undirected")
-plot(g_user, vertex.label=NA, vertex.color = "salmon", vertex.shape = "square", vertex.label.color = "black")
+V(g_user)$color <- ifelse(V(g)$sentiment>=0, "#28069A", "#F72A19")
+plot(g_user, vertex.label=NA, vertex.size=6, vertex.shape = "square", vertex.label.color = "black")
+simp_net <- simplify(g_user)
+plot(simp_net, vertex.label=NA, vertex.size=6, vertex.shape = "square", edge.color="gray70", edge.width=0.001 * count_multiple(g_user))
 
-#	The 2-mode matrix represents any events an actor had participated in. The woman-to-woman matrix describes how many events in common any two women had. The event-to-event matrix describes how many women in common any two events had.
-#	A tie for the 2-mode matrix represents this woman who had joined this event. A tie for the woman-to-woman matrix describes the two women who participated in a common event. And a tie for the event-to-event matrix describes there were a pair of women joining this event.
 #	The main diagonal of the 1-mode matrices means the "loops", a woman and herself could be counted as joining the same event; or in the event to event matrix meaning the event and itself had how many women in common. It doesn’t make any sense that there would be loops when projecting a bipartite network (as we would then be adding information that did not exist in the original network), so we want to set the diagonal of our result to 0.
 ```
 
 ```{r}
 # 4
 types <- V(g)$type # getting each vertex `type` let's us sort easily
+topic <- V(g)$topic
+sentiment <- V(g)$sentiment
 deg <- igraph::degree(g)
-bet <- igraph::betweenness(g)
-clos <- igraph::closeness(g)
-eig <- igraph::eigen_centrality(g)$vector
+betw <- igraph::betweenness(g)
+close <- igraph::closeness(g)
+eigen <- igraph::eigen_centrality(g)$vector
 
-cent_df <- data.frame(types, deg, bet, clos, eig)
-cent_df[order(cent_df$type, decreasing = TRUE),] ## sort w/ `order` by `type`
 
-V(g)$size <- igraph::degree(g)
-V(g)$label.cex <- igraph::degree(g) ** 0.1
-plot(g, layout = layout_with_graphopt)
+cent_df <- data.frame(types, topic, sentiment, deg, betw, close, eigen)
+cent_df <- cent_df[order(cent_df$deg, decreasing = TRUE),] ## sort w/ `order` by `degree`
+cent_df
+
+library(ggplot2)
+cent_df %>% 
+  filter(types == FALSE) %>%
+  ggplot(aes(x=deg)) +
+  geom_density() + 
+  labs(title="Degree Centrality Density among Users", x="degree")+
+  theme_minimal()
+
+cent_df %>% 
+  filter(types == TRUE) %>%
+  ggplot(aes(x=deg)) +
+  geom_density() + 
+  labs(title="Degree Centrality Density among Posts", x="degree")+
+  theme_minimal()
+
+# V(g)$size <- igraph::degree(g)
+# V(g)$label.cex <- igraph::degree(g) ** 0.1
+# plot(g, vertex.label=NA, layout = layout_with_graphopt)
 
 # I calculated all centrality, but degree is the simplest and most straightforward one, so I used it for plotting. 
 # The degree for the women is the rates of participation: Number of events with which each actor is affiliated. It is the degree of the node representing the actor in the 2-mode network
 # The degree for the events is the size of events: Number of actors affiliated with each event. It is the degree of the node representing the event in the 2-mode network
+```
+```{r}
+t3_nk564e <- get.edgelist(g)[which(g[2]=='t3_nk564e'), 2]
+t3_nk564e
+V(g)$sentiment[which(get.edgelist(g)[,2]=='t3_pl5g26')]
+get.edgelist(g)[(get.edgelist(g)[,2]=='t3_pl5g26')]
+E(g)
+```
 
+```{r}
 # 5
 # igraph::degree(g_post)
 # # binary
@@ -95,5 +169,28 @@ igraph::degree(g)
 # Since we care about the overall attendance, a larger event will have more participants and hence each participation takes less portion. Therefore, it is sometimes reasonable to say that co-attendance at larger events could be counted as less than co-attendance at small events. We can assign less weight to a linkage from an actor to a larger event in this case.
 
 ```
+
+clique number
+max cliques
+k-cores
+
+walk trip
+shortest path/common shortest path
+
+thickness of edges
+sample for visualization
+
+
+degree centrality of bipartite
+
+```{r}
+simp_net <- simplify(bigram_net)
+
+plot(simp_net, vertex.shape="none", vertex.label=bigram_net$name,
+vertex.label.color="blue", vertex.label.font=2.5,layout=layout_with_lgl,
+vertex.label.cex=.6, edge.color="gray70", edge.width=0.001 * count_multiple(bigram_net), main = "Top 50 Bigrams for 'Bad' Restaurants")
+
+```
+
 
 
